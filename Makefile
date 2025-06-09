@@ -29,6 +29,18 @@ clean:
 	rm -rf *.dtb *.dts
 
 
+test-fs-disk: # since macOS lacks the mkfs command, we use docker to do so.
+	docker run --rm --privileged -v "$PWD":/mnt -w /mnt ubuntu \
+	  bash -c "apt update && apt install -y e2fsprogs && \
+	           dd if=/dev/zero of=rootfs.ext4 bs=1M count=64 && \
+	           mkfs.ext4 rootfs.ext4 && \
+	           mkdir -p /mnt/tmp/ext && \
+	           mount -o loop rootfs.ext4 /mnt/tmp/ext && \
+	           echo 'Hello, World!' > /mnt/tmp/ext/test.txt && \
+	           umount /mnt/tmp/ext"
+
+
+
 dtb: kernel8.img
 	qemu-system-aarch64 -machine virt,dumpdtb=$(QEMU_SYS_DTB) \
     						-cpu $(QEMU_SYS_CPU) \
