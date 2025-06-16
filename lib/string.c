@@ -112,6 +112,23 @@ int strcmp(const char* str1, const char* str2) {
     return strncmp(str1, str2, len1);
 }
 
+char *strncpy(char *dest, const char *src, uintptr_t n) {
+    uintptr_t i = 0;
+
+    while (i < n && src[i] != '\0') {
+        dest[i] = src[i];
+        i++;
+    }
+
+    // Pad with null bytes if src is shorter than n
+    while (i < n) {
+        dest[i] = '\0';
+        i++;
+    }
+
+    return dest;
+}
+
 bool isset(void *pointer) { 
     return pointer != NULL;
 }
