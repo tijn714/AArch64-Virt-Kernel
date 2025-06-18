@@ -1,12 +1,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "common/common.h" // typedef of NULL and size_t
+#include "common/common.h" 
 
-size_t strlen(const char *s) {
-    size_t len = 0;
+unsigned long strlen(const char *str) {
+    unsigned long len = 0;
 
-    while(s[len]) {
+    while(str[len]) {
         len++;
     }
 

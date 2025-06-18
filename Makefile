@@ -4,7 +4,11 @@ AS=$(CROSS)as
 LD=$(CROSS)ld
 OBJC=$(CROSS)objcopy
 
-CUSTOM_CFLAGS=-DDEBUG_ENABLED
+# Custom flags for customization
+# Already built-in flags:
+# -DDEBUG_ENABLED : Enables debug features in the kernel (Log everything to the UART console) - NOT recommended for production builds
+
+CUSTOM_CFLAGS=-DDEBUG_ENABLED 
 
 BUILD_FOR=QEMU_VIRT
 
@@ -13,8 +17,17 @@ S_FILES = $(wildcard drivers/*.S)
 O_FILES = $(C_FILES:.c=.o) $(S_FILES:.S=.o)
 
 QEMU_SYS_CPU=cortex-a72
-QEMU_SYS_RAM=4096
+QEMU_SYS_RAM=4096M
 QEMU_SYS_DTB=virt.dtb
+
+
+QEMU_SYS_FLAGS=-cpu $(QEMU_SYS_CPU) \
+			   -m $(QEMU_SYS_RAM) \
+			   -vga none \
+			   -device virtio-gpu \
+			   -device ramfb \
+			   -display cocoa \
+			   -serial stdio
 
 all: clean kernel8.img
 
@@ -51,12 +64,7 @@ clean:
 dtb: kernel8.img
 	@echo "generating dtb file '#{QEMU_SYS_DTB}'"
 	@qemu-system-aarch64 -machine virt,dumpdtb=$(QEMU_SYS_DTB) \
-    						-cpu $(QEMU_SYS_CPU) \
-      						-m $(QEMU_SYS_RAM) \
-      						-device ramfb \
-      						-device virtio-gpu-pci \
-      						-display cocoa \
-      						-serial stdio \
+							$(QEMU_SYS_FLAGS) \
       						-kernel kernel8.img
 
 
@@ -65,21 +73,11 @@ dts: dtb
 
 run-dtb: dtb
 	qemu-system-aarch64 -machine virt \
-						-cpu $(QEMU_SYS_CPU) \
-  						-m $(QEMU_SYS_RAM) \
-  						-device ramfb \
-  						-device virtio-gpu-pci \
-  						-display cocoa \
-  						-serial stdio \
-  						-kernel kernel8.img \
+						$(QEMU_SYS_FLAGS) \
+						-kernel kernel8.img \
 						-dtb $(QEMU_SYS_DTB)
 
 run: kernel8.img
 	qemu-system-aarch64 -machine virt \
-						-cpu $(QEMU_SYS_CPU) \
-  						-m $(QEMU_SYS_RAM) \
-  						-device ramfb \
-  						-device virtio-gpu-pci \
-  						-display cocoa \
-  						-serial stdio \
-  						-kernel kernel8.img
+						$(QEMU_SYS_FLAGS) \
+						-kernel kernel8.img

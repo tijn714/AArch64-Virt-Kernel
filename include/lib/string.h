@@ -3,7 +3,7 @@
 
 #include <common/common.h>
 
-size_t strlen (const char *s);
+unsigned long strlen(const char *str);
 bool isEqual (const uint8_t* a, const uint8_t* b, size_t size);
 char* itoa(int value, char str, int base);
 void* memset (void* ptr, int value, size_t num);

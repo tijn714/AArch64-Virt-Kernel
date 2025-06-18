@@ -5,7 +5,7 @@
 #include <lib/string.h>
 #include <kernel/uart.h>
 
-#define MAX_DEVICES 32
+#define MAX_DEVICES 128
 #define MAX_DEVICE_NAME 64
 #define MAX_PROP_VALUE 128
 #define MAX_REG_SIZE 64       // Max bytes for raw reg property
@@ -35,12 +35,12 @@ typedef struct {
 typedef struct {
     device_t devices[MAX_DEVICES];
     uint32_t device_count;
-} dtb_context_t;
+} dtb_ctx;
 
 // Initialize and parse the DTB
-void dtb_parse(const void *dtb_blob, dtb_context_t *ctx);
+void dtb_parse(const void *dtb_blob, dtb_ctx *ctx);
 
 // Print all devices
-void dtb_print_devices(const dtb_context_t *ctx);
+void dtb_print_devices(const dtb_ctx *ctx);
 
 #endif // DTB_H

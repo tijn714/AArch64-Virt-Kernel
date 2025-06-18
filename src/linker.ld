@@ -1,14 +1,16 @@
-/* Linker.ld — AArch64 bare-metal kernel for QEMU virt */
 ENTRY(_start)
 
 SECTIONS {
     . = 0x40100000; /* Must avoid overlapping with DTB at 0x40000000 */
+    _dtb_end_ = .;
+    _kernel_start = .;    
 
     .startup . : {
         start.o(.text)
     }
     /* Code section */
     .text : ALIGN(4K) {
+        KEEP(*(.text._kernel_start)) /* needed for heap */
         KEEP(*(.text._start)) /* Ensure _start is first */
         *(.text*)
     }
